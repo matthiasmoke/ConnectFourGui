@@ -23,7 +23,7 @@ public class View extends JFrame implements ActionListener {
     private static final String MSG_NOT_INITIATED = "Game has not started yet!";
     private static final String MSG_VICTORY = "Congratulations! You won.";
     private static final String MSG_DEFEAT = "Sorry! Machine wins.";
-    private static final String MSG_GAMEOVER = "Game is already over!";
+    private static final String MSG_GAME_OVER = "Game is already over!";
 
     public View() {
 
@@ -54,7 +54,6 @@ public class View extends JFrame implements ActionListener {
         menuPanel.add(quitButton);
 
         gamePanel.setLayout(new GridLayout(Board.ROWS, Board.COLS));
-        initGamePanel();
 
         // Adding components to the main container.
         Container mainContainer = mainFrame.getContentPane();
@@ -63,6 +62,7 @@ public class View extends JFrame implements ActionListener {
 
         mainFrame.pack();
         mainFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        initGamePanel();
         mainFrame.setVisible(true);
 
     }
@@ -85,8 +85,12 @@ public class View extends JFrame implements ActionListener {
     }
 
     private Dimension getSlotSize() {
-        int relHeight = DEFAULT_HEIGHT / Board.ROWS;
-        int relWidth = DEFAULT_WIDTH / Board.COLS;
+        /*int relHeight = gamePanel.getHeight() / Board.ROWS;
+        int relWidth = gamePanel.getWidth() / Board.COLS;*/
+        //TODO
+
+        int relHeight = DEFAULT_HEIGHT / Board.COLS;
+        int relWidth = DEFAULT_WIDTH / Board.ROWS;
 
         return new Dimension(relWidth, relHeight);
     }
@@ -109,13 +113,34 @@ public class View extends JFrame implements ActionListener {
                 Board machineMove = gameModel.machineMove();
 
                 if (machineMove != null) {
-                    //TODO get column of machine move
+                    int column = getMachineMoveColumn(gameModel, machineMove);
+                    performMove(column, machineMove);
                 }
             }
         };
         machineThread.start();
     }
 
+    private int getMachineMoveColumn(Board oldBoard, Board machineMove) {
+        for (int col = 1; col <= Board.COLS; col++) {
+
+            for (int row = 1; row <= Board.ROWS; row++) {
+
+                if (oldBoard.getSlot(row, col) == null
+                        && machineMove.getSlot(row, col) != null) {
+                    return col;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Sets current game model to new board and draws move in game panel.
+     *
+     * @param column Column with new checker.
+     * @param newBoard Game board with new move made.
+     */
     private static void performMove(int column, Board newBoard) {
         for (int i = Board.ROWS - 1; i > 0; i--) {
 
@@ -126,10 +151,9 @@ public class View extends JFrame implements ActionListener {
                 int index = getComponentIndex(column, i);
                 Slot currSlot = (Slot) gamePanel.getComponent(index - 1);
                 currSlot.setCircleColor(player.getCheckerColor());
-
-
             }
         }
+        gameModel = newBoard;
     }
 
     /**
@@ -144,6 +168,7 @@ public class View extends JFrame implements ActionListener {
         int slotsBeforeCurrent = ((row - 1) * Board.COLS) - (Board.COLS - col);
         int index = allSlots - slotsBeforeCurrent;
 
+        //TODO fix calc error
         return index;
     }
 
@@ -151,16 +176,15 @@ public class View extends JFrame implements ActionListener {
         if (initiated()) {
             if (!machinePlaying) {
                 if (gameModel.isGameOver()) {
-                    showMessage(MSG_GAMEOVER);
+                    showMessage(MSG_GAME_OVER);
                 } else {
                     Board playerMove = gameModel.move(column);
 
                     if (playerMove != null) {
-                        gameModel = playerMove;
-                        performMove(column, gameModel);
+                        performMove(column, playerMove);
 
                         if (!checkWinner()) {
-                            gameModel = gameModel.machineMove();
+                            performMachineMove();
                             checkWinner();
                         }
                     } else {
@@ -255,7 +279,7 @@ public class View extends JFrame implements ActionListener {
         public void componentResized(ComponentEvent e) {
             Dimension newSize = getSlotSize();
 
-            //TODO
+            //TODO clean resize
             for (Component slot : gamePanel.getComponents()) {
                 slot.setPreferredSize(newSize);
             }

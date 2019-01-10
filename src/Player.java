@@ -10,14 +10,6 @@ public class Player implements Cloneable, Comparable {
     private boolean isMachine;
     private boolean isWinner;
 
-    /**
-     * Creates a new human player.
-     * @param symbol Symbol of the player.
-     */
-    public Player(char symbol) {
-        this.symbol = symbol;
-        this.isMachine = false;
-    }
 
     public Player(Color checkerColor, boolean isMachine) {
         this.checkerColor = checkerColor;
@@ -34,6 +26,11 @@ public class Player implements Cloneable, Comparable {
         this.isMachine = isMachine;
     }
 
+    /**
+     * Gets the checker-color of the player.
+     *
+     * @return The color the checkers of the player have.
+     */
     public Color getCheckerColor() {
         return checkerColor;
     }

@@ -25,21 +25,6 @@ public class ConnectFour implements Board, Cloneable {
      * @param switchPlayers If true, the bot will start the game.
      */
     public ConnectFour(boolean switchPlayers) {
-        Player human = new Player('X');
-        Player machine = new Player('O', true);
-
-        if (switchPlayers) {
-            players[0] = machine;
-            players[1] = human;
-        } else {
-            players[0] = human;
-            players[1] = machine;
-        }
-        currentPlayer = players[0];
-        groups = new GroupManager(players[0], players[1]);
-    }
-
-    public ConnectFour(boolean switchPlayers, boolean showView) {
         Player human = new Player(Color.YELLOW, false);
         Player machine = new Player(Color.RED, true);
 
