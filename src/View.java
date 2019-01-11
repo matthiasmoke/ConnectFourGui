@@ -85,12 +85,8 @@ public class View extends JFrame implements ActionListener {
     }
 
     private Dimension getSlotSize() {
-        /*int relHeight = gamePanel.getHeight() / Board.ROWS;
-        int relWidth = gamePanel.getWidth() / Board.COLS;*/
-        //TODO
-
-        int relHeight = DEFAULT_HEIGHT / Board.COLS;
-        int relWidth = DEFAULT_WIDTH / Board.ROWS;
+        int relHeight = gamePanel.getSize().height/ Board.ROWS;
+        int relWidth = gamePanel.getSize().width / Board.COLS;
 
         return new Dimension(relWidth, relHeight);
     }
