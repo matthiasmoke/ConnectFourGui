@@ -37,11 +37,11 @@ public class Slot extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        Graphics2D graphics2D = (Graphics2D) g;
         int radius = (int) calcRadius();
 
-        g.setColor(circleColor);
-        g.fillOval(0, 0, radius, radius);
+        graphics2D.setColor(circleColor);
+        graphics2D.fillOval(0, 0, radius, radius);
     }
 
     /**
