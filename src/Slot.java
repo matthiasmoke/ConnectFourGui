@@ -1,17 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class Slot extends JPanel {
 
     private static final Color BACKGROUND_COLOR = Color.BLUE;
     private Color circleColor;
     private View parent;
-
-    public Slot() {
-        circleColor = Color.WHITE;
-    }
 
     public Slot(Dimension size, View parent) {
         circleColor = Color.WHITE;
@@ -22,7 +18,7 @@ public class Slot extends JPanel {
         addMouseListener(new SlotClickListener());
     }
 
-    class SlotClickListener implements MouseListener {
+    class SlotClickListener extends MouseAdapter {
 
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -31,29 +27,13 @@ public class Slot extends JPanel {
             Point p = clickedSlot.getLocation();
             int col = p.x / r.width;
             parent.columnClickedEvent(col + 1);
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -64,11 +44,21 @@ public class Slot extends JPanel {
         g.fillOval(0, 0, radius, radius);
     }
 
+    /**
+     * Calculates circle radius for checker circle.
+     *
+     * @return Radius for circle drawing.
+     */
     private double calcRadius() {
         int width = getPreferredSize().width;
         return width * 0.9;
     }
 
+    /**
+     * Sets the color that for the circle that represents the slot.
+     *
+     * @param color
+     */
     public void setCircleColor(Color color) {
         circleColor = color;
         repaint();

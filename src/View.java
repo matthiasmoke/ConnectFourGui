@@ -1,20 +1,27 @@
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 public class View extends JFrame implements ActionListener {
 
-    private static JFrame mainFrame;
     private static JPanel gamePanel;
     private static JButton newGameButton;
     private static JButton switchButton;
     private static JButton quitButton;
     private static JComboBox<Integer> levelSelection;
     private static Board gameModel;
-    private static Thread machineThread;
     private static boolean machinePlaying = false;
     private static final int[] LEVELS = {1, 2, 3, 4, 5};
     private static final int DEFAULT_HEIGHT = 650;
@@ -25,16 +32,12 @@ public class View extends JFrame implements ActionListener {
     private static final String MSG_DEFEAT = "Sorry! Machine wins.";
     private static final String MSG_GAME_OVER = "Game is already over!";
 
-    public View() {
+    private View() {
 
     }
 
-    public void showGame() {
-        initMainView();
-    }
-
-    public  void initMainView() {
-        mainFrame = new JFrame("Connect Four");
+    private void showGame() {
+        JFrame mainFrame = new JFrame("Connect Four");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Initializing controls here.
@@ -60,13 +63,23 @@ public class View extends JFrame implements ActionListener {
         mainContainer.add(BorderLayout.CENTER, gamePanel);
         mainContainer.add(BorderLayout.SOUTH, menuPanel);
 
-        mainFrame.pack();
         mainFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         initGamePanel();
         mainFrame.setVisible(true);
 
     }
 
+    private void addActionListeners() {
+        levelSelection.addActionListener(new SelectionListener());
+        newGameButton.addActionListener(new NewGameListener());
+        switchButton.addActionListener(new SwitchListener());
+        quitButton.addActionListener(new QuitListener());
+        gamePanel.addComponentListener(new ResizeListener());
+    }
+
+    /**
+     * Adds possible levels to combo box.
+     */
     private void initLevelComboBox() {
         for (int level : LEVELS) {
             levelSelection.addItem(level);
@@ -74,6 +87,9 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Adds slots to game panel.
+     */
     private void initGamePanel() {
         int numberOfSlots = Board.COLS * Board.ROWS;
         Dimension slotDim = getSlotSize();
@@ -84,6 +100,11 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Calculates the relative slot size
+     *
+     * @return Slot size that fits the panel size.
+     */
     private Dimension getSlotSize() {
         int relHeight = gamePanel.getSize().height/ Board.ROWS;
         int relWidth = gamePanel.getSize().width / Board.COLS;
@@ -100,8 +121,46 @@ public class View extends JFrame implements ActionListener {
         return gameModel != null;
     }
 
+    /**
+     * Event that is triggered from a slot the human clicked
+     *
+     * @param column Column in that human placed his checker.
+     */
+    public void columnClickedEvent(int column) {
+        if (initiated()) {
+            if (!machinePlaying) {
+                if (gameModel.isGameOver()) {
+                    showMessage(MSG_GAME_OVER);
+                } else {
+                    performHumanMove(column);
+                }
+            } else {
+                showMessage(MSG_ILLEGAL_MOVE);
+            }
+        } else {
+            showMessage(MSG_NOT_INITIATED);
+        }
+    }
+
+    private void performHumanMove(int column) {
+        Board playerMove = gameModel.move(column);
+
+        if (playerMove != null) {
+            performMove(column, playerMove);
+
+            if (!checkWinner()) {
+                performMachineMove();
+            }
+        } else {
+            showMessage(MSG_ILLEGAL_MOVE);
+        }
+    }
+
+    /**
+     * Performs machine move.
+     */
     private void performMachineMove() {
-        machineThread = new Thread() {
+        Thread machineThread = new Thread() {
             @Override
             public void run() {
                 super.run();
@@ -112,11 +171,21 @@ public class View extends JFrame implements ActionListener {
                     int column = getMachineMoveColumn(gameModel, machineMove);
                     performMove(column, machineMove);
                 }
+
+                checkWinner();
+                machinePlaying = false;
             }
         };
         machineThread.start();
     }
 
+    /**
+     * Gets the column in that the machine moved its checker.
+     *
+     * @param oldBoard Board before machine move.
+     * @param machineMove Board after machine move.
+     * @return Column index of machine move.
+     */
     private int getMachineMoveColumn(Board oldBoard, Board machineMove) {
         for (int col = 1; col <= Board.COLS; col++) {
 
@@ -137,8 +206,8 @@ public class View extends JFrame implements ActionListener {
      * @param column Column with new checker.
      * @param newBoard Game board with new move made.
      */
-    private static void performMove(int column, Board newBoard) {
-        for (int i = Board.ROWS - 1; i > 0; i--) {
+    private void performMove(int column, Board newBoard) {
+        for (int i = Board.ROWS; i > 0; i--) {
 
             // Get position and player of the last checker that was put in game
             Player player = newBoard.getSlot(i, column);
@@ -160,47 +229,36 @@ public class View extends JFrame implements ActionListener {
      * @return Component index in the game panel.
      */
     private static int getComponentIndex(int col, int row) {
-        int allSlots = Board.COLS * Board.ROWS;
-        int slotsBeforeCurrent = ((row - 1) * Board.COLS) - (Board.COLS - col);
-        int index = allSlots - slotsBeforeCurrent;
 
-        //TODO fix calc error
+        // Calc slots in all rows before row.
+        int slotsInRowsBefore = (Board.ROWS - row) * Board.COLS;
+
+        // Add slots in current row to get index.
+        int index = slotsInRowsBefore + col;
+
         return index;
     }
 
-    public void columnClickedEvent(int column) {
-        if (initiated()) {
-            if (!machinePlaying) {
-                if (gameModel.isGameOver()) {
-                    showMessage(MSG_GAME_OVER);
-                } else {
-                    Board playerMove = gameModel.move(column);
-
-                    if (playerMove != null) {
-                        performMove(column, playerMove);
-
-                        if (!checkWinner()) {
-                            performMachineMove();
-                            checkWinner();
-                        }
-                    } else {
-                        showMessage(MSG_ILLEGAL_MOVE);
-                    }
-                }
-            } else {
-                showMessage(MSG_ILLEGAL_MOVE);
-            }
-        } else {
-            showMessage(MSG_NOT_INITIATED);
-        }
-    }
-
     private void showMessage(String message) {
+        int messageType;
+
+        // Define message type for option pane.
+        if (message.equals(MSG_DEFEAT) ||message.equals(MSG_VICTORY)) {
+            messageType = JOptionPane.INFORMATION_MESSAGE;
+        } else {
+            messageType = JOptionPane.WARNING_MESSAGE;
+        }
+
         JOptionPane.showMessageDialog(this,
                  message, "Attention",
-                JOptionPane.WARNING_MESSAGE);
+                messageType);
     }
 
+    /**
+     * Checks if the game has a winner.
+     *
+     * @return True if someone won.
+     */
     private boolean checkWinner() {
         if (gameModel.isGameOver()) {
             Player winner = gameModel.getWinner();
@@ -217,14 +275,9 @@ public class View extends JFrame implements ActionListener {
         return false;
     }
 
-    private void addActionListeners() {
-        levelSelection.addActionListener(new SelectionListener());
-        newGameButton.addActionListener(new NewGameListener());
-        switchButton.addActionListener(new SwitchListener());
-        quitButton.addActionListener(new QuitListener());
-        gamePanel.addComponentListener(new ResizeListener());
-    }
-
+    /**
+     * Listener class for level selection.
+     */
     class SelectionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -234,34 +287,56 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Listener class for new game button.
+     */
     class NewGameListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            gameModel = new ConnectFour(false);
+            createNewGame(false);
         }
     }
 
+    /**
+     * Listener class for switch button.
+     */
     class SwitchListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             createNewGame(true);
         }
+    }
 
-        /**
-         * Creates a new game. Takes over level from old game.
-         *
-         * @param switchPlayer Determines if machine should start.
-         */
-        private void createNewGame(boolean switchPlayer) {
-            gameModel = new ConnectFour(switchPlayer);
-            gameModel.setLevel((int) levelSelection.getSelectedItem());
+    /**
+     * Creates a new game. Takes over level from old game.
+     *
+     * @param switchPlayer Determines if machine should start.
+     */
+    private void createNewGame(boolean switchPlayer) {
+        gameModel = new ConnectFour(switchPlayer);
+        gameModel.setLevel((int) levelSelection.getSelectedItem());
+        clearGamePanel();
 
-            if (gameModel.getFirstPlayer().isMachine()) {
-                performMachineMove();
-            }
+        if (gameModel.getFirstPlayer().isMachine()) {
+            performMachineMove();
         }
     }
 
+    /**
+     * Sets the color of all slots to white;
+     */
+    private void clearGamePanel() {
+        Component[] slots = gamePanel.getComponents();
+
+        for (Component slot : slots) {
+            Slot currSlot = (Slot) slot;
+            currSlot.setCircleColor(Color.WHITE);
+        }
+    }
+
+    /**
+     * Listener class for quit button.
+     */
     class QuitListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -269,7 +344,10 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
-    class ResizeListener implements ComponentListener {
+    /**
+     * Listener class for frame resizing.
+     */
+    class ResizeListener extends ComponentAdapter {
 
         @Override
         public void componentResized(ComponentEvent e) {
@@ -280,28 +358,29 @@ public class View extends JFrame implements ActionListener {
                 slot.setPreferredSize(newSize);
             }
         }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {
-
-        }
-
-        @Override
-        public void componentShown(ComponentEvent e) {
-
-        }
-
-        @Override
-        public void componentHidden(ComponentEvent e) {
-
-        }
     }
 
+    /**
+     * Main method for view.
+     *
+     * @param args /
+     */
     public static void main(String[] args) {
         View mainView = new View();
         mainView.showGame();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
