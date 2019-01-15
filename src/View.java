@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Collection;
 
 public class View extends JFrame implements ActionListener {
 
@@ -269,10 +270,22 @@ public class View extends JFrame implements ActionListener {
                 } else {
                     showMessage(MSG_VICTORY);
                 }
+                 markWitness(gameModel.getWitness());
                 return true;
             }
         }
         return false;
+    }
+
+    private void markWitness(Collection<Coordinates2D> witness) {
+        for (Coordinates2D slot : witness) {
+            int slotIndex = getComponentIndex(slot.getColumn(),
+                    slot.getRow() + 1);
+
+            Slot currSlot = (Slot) gamePanel.getComponent(slotIndex);
+            currSlot.setWitness(true);
+        }
+        gamePanel.repaint();
     }
 
     /**
@@ -331,6 +344,10 @@ public class View extends JFrame implements ActionListener {
         for (Component slot : slots) {
             Slot currSlot = (Slot) slot;
             currSlot.setCircleColor(Color.WHITE);
+
+            if (currSlot.isWitness()) {
+                currSlot.setWitness(false);
+            }
         }
     }
 
