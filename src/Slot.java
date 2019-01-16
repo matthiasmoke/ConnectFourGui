@@ -38,31 +38,25 @@ public class Slot extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        int width = getSize().width;
+        int radius = (int) (Math.round(width * 0.9));
+        int posFactorX = (int) (Math.round(width * 0.05));
+        int posFactorY = (int) (Math.round(getSize().height * 0.02));
+
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int width = getSize().width;
-        int radius = (int) (width - (0.1 * width));
-        //int radius = (int) calcRadius();
         graphics2D.setColor(circleColor);
-        graphics2D.fillOval(0, 0, radius, radius);
+        graphics2D.fillOval(posFactorX, posFactorY, radius, radius);
 
         if (witness) {
-            graphics2D.setColor(Color.BLACK);
-            int witRad = (int) (width * 0.2);
-            graphics2D.fillOval(witRad, witRad, radius/2, radius/2);
-        }
-    }
+            int positionFactor = (int) (width * 0.22);
 
-    /**
-     * Calculates circle radius for checker circle.
-     *
-     * @return Radius for circle drawing.
-     */
-    private double calcRadius() {
-        int width = getPreferredSize().width;
-        return width * 0.9;
+            graphics2D.setColor(Color.BLACK);
+            graphics2D.fillOval(positionFactor, positionFactor,
+                    radius/2, radius/2);
+        }
     }
 
     /**
