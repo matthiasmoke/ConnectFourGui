@@ -15,7 +15,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Collection;
 
-public class View extends JFrame implements ActionListener {
+public class View extends JFrame {
 
     private static JPanel gamePanel;
     private static JButton newGameButton;
@@ -393,13 +393,5 @@ public class View extends JFrame implements ActionListener {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-
     }
 }
