@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Represents a slot where a checker can be placed in.
+ */
 public class Slot extends JPanel {
 
     private static final Color BACKGROUND_COLOR = Color.BLUE;
@@ -10,6 +13,12 @@ public class Slot extends JPanel {
     private View parent;
     private boolean witness = false;
 
+    /**
+     * Initializes a Slot with given size.
+     *
+     * @param size Size of the slot.
+     * @param parent Parent view where slot is located in.
+     */
     public Slot(Dimension size, View parent) {
         circleColor = Color.WHITE;
         this.parent = parent;
@@ -19,6 +28,10 @@ public class Slot extends JPanel {
         addMouseListener(new SlotClickListener());
     }
 
+    /**
+     * Called when slot is clicked, calculates column position and
+     * triggers event in main view.
+     */
     class SlotClickListener extends MouseAdapter {
 
         @Override
@@ -39,10 +52,18 @@ public class Slot extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        int height = getSize().height;
         int width = getSize().width;
-        int radius = (int) (Math.round(width * 0.9));
+        int radFactor = getSize().width;
+
+        // Choose factor for radius so circles do not cut each other.
+        if (width > height) {
+            radFactor = height;
+        }
+
+        int radius = (int) (Math.round(radFactor * 0.9));
         int posFactorX = (int) (Math.round(width * 0.05));
-        int posFactorY = (int) (Math.round(getSize().height * 0.02));
+        int posFactorY = (int) (Math.round(height * 0.02));
 
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -51,7 +72,8 @@ public class Slot extends JPanel {
         graphics2D.fillOval(posFactorX, posFactorY, radius, radius);
 
         if (witness) {
-            int positionFactor = (int) (width * 0.22);
+            //TODO witness positioning
+            int positionFactor = (int) (radFactor * 0.22);
 
             graphics2D.setColor(Color.BLACK);
             graphics2D.fillOval(positionFactor, positionFactor,
@@ -69,10 +91,20 @@ public class Slot extends JPanel {
         repaint();
     }
 
+    /**
+     * Mark or un-mark slot as witness.
+     *
+     * @param isWitness True if slot should be displayed as witness.
+     */
     public void setWitness(boolean isWitness) {
         this.witness = isWitness;
     }
 
+    /**
+     * Checks if slot is witness.
+     *
+     * @return True if slot is a witness.
+     */
     public boolean isWitness() {
         return witness;
     }

@@ -9,12 +9,12 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.util.Collection;
 
+/**
+ * Represents main view of the game.
+ */
 public class View extends JFrame {
 
     private static JPanel gamePanel;
@@ -37,6 +37,9 @@ public class View extends JFrame {
 
     }
 
+    /**
+     * Method that initializes the view.
+     */
     private void showGame() {
         JFrame mainFrame = new JFrame("Connect Four");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,12 +67,16 @@ public class View extends JFrame {
         mainContainer.add(BorderLayout.CENTER, gamePanel);
         mainContainer.add(BorderLayout.SOUTH, menuPanel);
 
+        mainFrame.setMinimumSize(new Dimension(300, 300));
         mainFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         initGamePanel();
         mainFrame.setVisible(true);
 
     }
 
+    /**
+     * Adds all necessary listeners to controls.
+     */
     private void addActionListeners() {
         levelSelection.addActionListener(new SelectionListener());
         newGameButton.addActionListener(new NewGameListener());
@@ -107,7 +114,7 @@ public class View extends JFrame {
      * @return Slot size that fits the panel size.
      */
     private Dimension getSlotSize() {
-        int relHeight = gamePanel.getSize().height/ Board.ROWS;
+        int relHeight = gamePanel.getSize().height / Board.ROWS;
         int relWidth = gamePanel.getSize().width / Board.COLS;
 
         return new Dimension(relWidth, relHeight);
@@ -123,7 +130,7 @@ public class View extends JFrame {
     }
 
     /**
-     * Event that is triggered from a slot the human clicked
+     * Event that is triggered from a slot the human clicked.
      *
      * @param column Column in that human placed his checker.
      */
@@ -143,6 +150,11 @@ public class View extends JFrame {
         }
     }
 
+    /**
+     * Performs the human move.
+     *
+     * @param column Column that human moved into.
+     */
     private void performHumanMove(int column) {
         Board playerMove = gameModel.move(column);
 
@@ -240,19 +252,24 @@ public class View extends JFrame {
         return index;
     }
 
+    /**
+     * Shows a message box with the given message.
+     *
+     * @param message Message to display.
+     */
     private void showMessage(String message) {
         int messageType;
+        String header = "Attention";
 
-        // Define message type for option pane.
+        // Define message type and header for option pane.
         if (message.equals(MSG_DEFEAT) ||message.equals(MSG_VICTORY)) {
             messageType = JOptionPane.INFORMATION_MESSAGE;
+            header = "Info";
         } else {
             messageType = JOptionPane.WARNING_MESSAGE;
         }
 
-        JOptionPane.showMessageDialog(this,
-                 message, "Attention",
-                messageType);
+        JOptionPane.showMessageDialog(this, message, header, messageType);
     }
 
     /**
@@ -277,6 +294,11 @@ public class View extends JFrame {
         return false;
     }
 
+    /**
+     * Marks the witness slots by given coordinates.
+     *
+     * @param witness Collection of witness coordinates.
+     */
     private void markWitness(Collection<Coordinates2D> witness) {
         for (Coordinates2D slot : witness) {
             int slotIndex = getComponentIndex(slot.getColumn(),
@@ -370,7 +392,6 @@ public class View extends JFrame {
         public void componentResized(ComponentEvent e) {
             Dimension newSize = getSlotSize();
 
-            //TODO clean resize
             for (Component slot : gamePanel.getComponents()) {
                 slot.setPreferredSize(newSize);
             }
