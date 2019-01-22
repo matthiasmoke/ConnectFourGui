@@ -1,8 +1,4 @@
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -32,6 +28,9 @@ public class View extends JFrame {
     private static final String MSG_VICTORY = "Congratulations! You won.";
     private static final String MSG_DEFEAT = "Sorry! Machine wins.";
     private static final String MSG_GAME_OVER = "Game is already over!";
+    private static final String MSG_MACHINE_IS_PLAYING
+            = "Your enemy has not finished thinking yet...";
+    private static final String MSG_NO_WINNER = "No one won...";
 
     private View() {
 
@@ -143,7 +142,7 @@ public class View extends JFrame {
                     performHumanMove(column);
                 }
             } else {
-                showMessage(MSG_ILLEGAL_MOVE);
+                showMessage(MSG_MACHINE_IS_PLAYING);
             }
         } else {
             showMessage(MSG_NOT_INITIATED);
@@ -170,26 +169,38 @@ public class View extends JFrame {
     }
 
     /**
+     * Thread class for machine move to use swing worker for time consuming move
+     */
+    class MachineThread extends SwingWorker<Board, Boolean> {
+
+        @Override
+        protected Board doInBackground() throws Exception {
+            machinePlaying = true;
+            Board machineMove = gameModel.machineMove();
+
+            if (machineMove != null) {
+                int column = getMachineMoveColumn(gameModel, machineMove);
+                SwingUtilities.invokeAndWait(()
+                        -> performMove(column, machineMove));
+            }
+            checkWinner();
+            machinePlaying = false;
+            return machineMove;
+        }
+    }
+
+    /**
      * Performs machine move.
      */
     private void performMachineMove() {
-        Thread machineThread = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                machinePlaying = true;
-                Board machineMove = gameModel.machineMove();
+        try {
+            MachineThread move = new MachineThread();
+            move.execute();
+        }catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+        }
 
-                if (machineMove != null) {
-                    int column = getMachineMoveColumn(gameModel, machineMove);
-                    performMove(column, machineMove);
-                }
-
-                checkWinner();
-                machinePlaying = false;
-            }
-        };
-        machineThread.start();
     }
 
     /**
@@ -229,9 +240,9 @@ public class View extends JFrame {
                 int index = getComponentIndex(column, i);
                 Slot currSlot = (Slot) gamePanel.getComponent(index - 1);
                 currSlot.setCircleColor(player.getCheckerColor());
+                gameModel = newBoard;
             }
         }
-        gameModel = newBoard;
     }
 
     /**
@@ -288,6 +299,9 @@ public class View extends JFrame {
                     showMessage(MSG_VICTORY);
                 }
                  markWitness(gameModel.getWitness());
+                return true;
+            } else {
+                showMessage(MSG_NO_WINNER);
                 return true;
             }
         }

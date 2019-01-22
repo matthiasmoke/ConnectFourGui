@@ -54,7 +54,7 @@ public class Slot extends JPanel {
 
         int height = getSize().height;
         int width = getSize().width;
-        int radFactor = getSize().width;
+        int radFactor = width;
 
         // Choose factor for radius so circles do not cut each other.
         if (width > height) {
@@ -63,7 +63,7 @@ public class Slot extends JPanel {
 
         int radius = (int) (Math.round(radFactor * 0.9));
         int posFactorX = (int) (Math.round(width * 0.05));
-        int posFactorY = (int) (Math.round(height * 0.02));
+        int posFactorY = (int) (Math.round(height * 0.05));
 
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -73,11 +73,11 @@ public class Slot extends JPanel {
 
         if (witness) {
             //TODO witness positioning
-            int positionFactor = (int) (radFactor * 0.22);
+            int posX = (int) (Math.round(radius * 0.3));
+            int posY = (int) (Math.round(radius * 0.3));
 
             graphics2D.setColor(Color.BLACK);
-            graphics2D.fillOval(positionFactor, positionFactor,
-                    radius/2, radius/2);
+            graphics2D.fillOval((int) (radFactor * 0.22), (int)(radFactor * 0.22), radius/2, radius/2);
         }
     }
 
