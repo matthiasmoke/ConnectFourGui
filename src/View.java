@@ -31,6 +31,7 @@ public class View extends JFrame {
     private static final String MSG_MACHINE_IS_PLAYING
             = "Your enemy has not finished thinking yet...";
     private static final String MSG_NO_WINNER = "No one won...";
+    private static MachineThread machineThread;
 
     private View() {
 
@@ -159,6 +160,7 @@ public class View extends JFrame {
 
         if (playerMove != null) {
             performMove(column, playerMove);
+            gameModel = playerMove;
 
             if (!checkWinner()) {
                 performMachineMove();
@@ -171,21 +173,35 @@ public class View extends JFrame {
     /**
      * Thread class for machine move to use swing worker for time consuming move
      */
-    class MachineThread extends SwingWorker<Board, Boolean> {
+    class MachineThread extends Thread {
 
         @Override
-        protected Board doInBackground() throws Exception {
+        public void run() {
             machinePlaying = true;
             Board machineMove = gameModel.machineMove();
 
             if (machineMove != null) {
                 int column = getMachineMoveColumn(gameModel, machineMove);
-                SwingUtilities.invokeAndWait(()
-                        -> performMove(column, machineMove));
+
+                try {
+                    SwingUtilities.invokeAndWait(()
+                            -> performMove(column, machineMove));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(),
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+
             }
             checkWinner();
+            gameModel = machineMove;
             machinePlaying = false;
-            return machineMove;
+        }
+    }
+
+    private void killThread() {
+        if (machinePlaying) {
+            machineThread.stop();
+            machinePlaying = false;
         }
     }
 
@@ -193,14 +209,8 @@ public class View extends JFrame {
      * Performs machine move.
      */
     private void performMachineMove() {
-        try {
-            MachineThread move = new MachineThread();
-            move.execute();
-        }catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                    "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-
+        machineThread = new MachineThread();
+        machineThread.start();
     }
 
     /**
@@ -240,7 +250,6 @@ public class View extends JFrame {
                 int index = getComponentIndex(column, i);
                 Slot currSlot = (Slot) gamePanel.getComponent(index - 1);
                 currSlot.setCircleColor(player.getCheckerColor());
-                gameModel = newBoard;
             }
         }
     }
@@ -362,9 +371,10 @@ public class View extends JFrame {
      * @param switchPlayer Determines if machine should start.
      */
     private void createNewGame(boolean switchPlayer) {
+        killThread();
+        clearGame();
         gameModel = new ConnectFour(switchPlayer);
         gameModel.setLevel((int) levelSelection.getSelectedItem());
-        clearGamePanel();
 
         if (gameModel.getFirstPlayer().isMachine()) {
             performMachineMove();
@@ -374,7 +384,8 @@ public class View extends JFrame {
     /**
      * Sets the color of all slots to white;
      */
-    private void clearGamePanel() {
+    private void clearGame() {
+        gameModel = null;
         Component[] slots = gamePanel.getComponents();
 
         for (Component slot : slots) {
@@ -393,6 +404,7 @@ public class View extends JFrame {
     class QuitListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            killThread();
             System.exit(0);
         }
     }
