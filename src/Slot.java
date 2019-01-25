@@ -61,9 +61,10 @@ public class Slot extends JPanel {
             radFactor = height;
         }
 
-        int radius = (int) (Math.round(radFactor * 0.9));
-        int posFactorX = (int) (Math.round(width * 0.05));
-        int posFactorY = (int) (Math.round(height * 0.05));
+        // X and Y position and radius  for circle
+        int radius = (int) (Math.round(radFactor * 0.95));
+        int posFactorX = width/2 - radius/2;
+        int posFactorY = height/2 - radius/2;
 
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -72,19 +73,19 @@ public class Slot extends JPanel {
         graphics2D.fillOval(posFactorX, posFactorY, radius, radius);
 
         if (witness) {
-            //TODO witness positioning
-            int posX = (int) (Math.round(radius * 0.3));
-            int posY = (int) (Math.round(radius * 0.3));
+            //X and Y position for witness circle
+            int posX = width/2 - radius/4;
+            int posY = height/2 - radius/4;
 
             graphics2D.setColor(Color.BLACK);
-            graphics2D.fillOval((int) (radFactor * 0.22), (int)(radFactor * 0.22), radius/2, radius/2);
+            graphics2D.fillOval(posX, posY, radius/2, radius/2);
         }
     }
 
     /**
      * Sets the color that for the circle that represents the slot.
      *
-     * @param color
+     * @param color Color of the circle
      */
     public void setCircleColor(Color color) {
         circleColor = color;

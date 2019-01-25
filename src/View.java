@@ -1,4 +1,9 @@
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -182,22 +187,19 @@ public class View extends JFrame {
 
             if (machineMove != null) {
                 int column = getMachineMoveColumn(gameModel, machineMove);
-
-                try {
-                    SwingUtilities.invokeAndWait(()
-                            -> performMove(column, machineMove));
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(),
-                            "Warning", JOptionPane.WARNING_MESSAGE);
-                }
-
+                SwingUtilities.invokeLater(()
+                        -> performMove(column, machineMove));
             }
-            checkWinner();
             gameModel = machineMove;
+            checkWinner();
             machinePlaying = false;
         }
     }
 
+    /**
+     * Stops the machine thread if its running
+     */
+    @Deprecated
     private void killThread() {
         if (machinePlaying) {
             machineThread.stop();
