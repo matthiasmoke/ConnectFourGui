@@ -1,3 +1,5 @@
+package Model;
+
 import java.awt.*;
 
 /**
@@ -17,7 +19,7 @@ public class Player implements Cloneable, Comparable {
     }
 
     /**
-     * Creates a new human or machine Player.
+     * Creates a new human or machine Model.Player.
      * @param symbol Symbol of the player.
      * @param isMachine Indicates if player is type of machine or not.
      */

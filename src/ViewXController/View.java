@@ -1,3 +1,8 @@
+package ViewXController;
+import Model.Board;
+import Model.ConnectFour;
+import Model.Coordinates2D;
+import Model.Player;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -116,7 +121,7 @@ public class View extends JFrame {
     /**
      * Calculates the relative slot size
      *
-     * @return Slot size that fits the panel size.
+     * @return ViewXController.Slot size that fits the panel size.
      */
     private Dimension getSlotSize() {
         int relHeight = gamePanel.getSize().height / Board.ROWS;
@@ -218,8 +223,8 @@ public class View extends JFrame {
     /**
      * Gets the column in that the machine moved its checker.
      *
-     * @param oldBoard Board before machine move.
-     * @param machineMove Board after machine move.
+     * @param oldBoard Model.Board before machine move.
+     * @param machineMove Model.Board after machine move.
      * @return Column index of machine move.
      */
     private int getMachineMoveColumn(Board oldBoard, Board machineMove) {

@@ -1,3 +1,5 @@
+package Model;
+
 /**
  * Class to represent the coordinates of a checker in the game-board
  */

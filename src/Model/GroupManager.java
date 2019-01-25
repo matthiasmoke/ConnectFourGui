@@ -1,10 +1,12 @@
+package Model;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Manages groups for a ConnectFour game.
+ * Manages groups for a Model.ConnectFour game.
  */
 public class GroupManager implements Cloneable {
 
@@ -13,10 +15,10 @@ public class GroupManager implements Cloneable {
     private Player[] players = new Player[2];
 
     /**
-     * Creates a new GroupManager for two players.
+     * Creates a new Model.GroupManager for two players.
      *
-     * @param player1 Player one.
-     * @param player2 Player two.
+     * @param player1 Model.Player one.
+     * @param player2 Model.Player two.
      */
     public GroupManager(Player player1, Player player2) {
         players[0] = player1;
@@ -26,9 +28,9 @@ public class GroupManager implements Cloneable {
     /**
      * Checks if the neighbours of a checker are in a group with certain type.
      *
-     * @param checker Checker that neighbours belong to.
+     * @param checker Model.Checker that neighbours belong to.
      * @param neighbours Neighbours of the given checker.
-     * @param type Group type to check for.
+     * @param type Model.Group type to check for.
      */
     public void check(Checker checker, List<Checker> neighbours,
                       GroupType type) {
@@ -125,7 +127,7 @@ public class GroupManager implements Cloneable {
     /**
      * Checks if the neighbours of a checker are in a group with certain type.
      *
-     * @param checker Checker that neighbours belong to.
+     * @param checker Model.Checker that neighbours belong to.
      * @param neighbours Neighbours of the checker.
      * @param type Type of group to check for.
      * @param allGroups Existing groups of certain player.

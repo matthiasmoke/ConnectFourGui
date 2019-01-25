@@ -1,3 +1,5 @@
+package ViewXController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -14,7 +16,7 @@ public class Slot extends JPanel {
     private boolean witness = false;
 
     /**
-     * Initializes a Slot with given size.
+     * Initializes a ViewXController.Slot with given size.
      *
      * @param size Size of the slot.
      * @param parent Parent view where slot is located in.

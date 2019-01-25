@@ -1,3 +1,5 @@
+package Model;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -351,7 +353,7 @@ public class ConnectFour implements Board, Cloneable {
     /**
      * Check if there are new groups for all group-types
      *
-     * @param checker Checker to search groups for
+     * @param checker Model.Checker to search groups for
      */
     private void groupSearch(Checker checker) {
         findDiagonalFallingMembers(checker);
@@ -363,7 +365,7 @@ public class ConnectFour implements Board, Cloneable {
     /**
      * Searches for the vertical neighbours of the given checker
      *
-     * @param checker Checker for search.
+     * @param checker Model.Checker for search.
      */
     private void findVerticalNeighbours(Checker checker) {
 
@@ -395,7 +397,7 @@ public class ConnectFour implements Board, Cloneable {
     /**
      * Searches for the right and left neighbours of the given checker.
      *
-     * @param checker Checker for search.
+     * @param checker Model.Checker for search.
      */
     private void findHorizontalNeighbours(Checker checker) {
 
@@ -427,7 +429,7 @@ public class ConnectFour implements Board, Cloneable {
     /**
      * Searches for the neighbours on a rising diagonal through the checker
      *
-     * @param checker Checker for search.
+     * @param checker Model.Checker for search.
      */
     private void findDiagonalRisingMembers(Checker checker) {
 
@@ -459,7 +461,7 @@ public class ConnectFour implements Board, Cloneable {
     /**
      * Searches for the neighbours on a falling diagonal through the checker
      *
-     * @param checker Checker for search.
+     * @param checker Model.Checker for search.
      */
     private void findDiagonalFallingMembers(Checker checker) {
 

@@ -1,3 +1,5 @@
+package Model;
+
 /**
  * Represents a checker in the game
  */
@@ -7,10 +9,10 @@ public class Checker implements Cloneable {
     private Coordinates2D position;
 
     /**
-     * Creates a new Checker
+     * Creates a new Model.Checker
      *
      * @param position Position in game board
-     * @param owner Owner of Checker
+     * @param owner Owner of Model.Checker
      */
     public Checker(Coordinates2D position, Player owner) {
         this.position = position;
