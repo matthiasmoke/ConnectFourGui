@@ -1,7 +1,13 @@
 package ViewXController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -65,8 +71,8 @@ public class Slot extends JPanel {
 
         // X and Y position and radius  for circle
         int radius = (int) (Math.round(radFactor * 0.95));
-        int posFactorX = width/2 - radius/2;
-        int posFactorY = height/2 - radius/2;
+        int posFactorX = width / 2 - radius / 2;
+        int posFactorY = height / 2 - radius / 2;
 
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -75,12 +81,12 @@ public class Slot extends JPanel {
         graphics2D.fillOval(posFactorX, posFactorY, radius, radius);
 
         if (witness) {
-            //X and Y position for witness circle
-            int posX = width/2 - radius/4;
-            int posY = height/2 - radius/4;
+            // X and Y position for witness circle
+            int posX = width / 2 - radius / 4;
+            int posY = height / 2 - radius / 4;
 
             graphics2D.setColor(Color.BLACK);
-            graphics2D.fillOval(posX, posY, radius/2, radius/2);
+            graphics2D.fillOval(posX, posY, radius / 2, radius / 2);
         }
     }
 

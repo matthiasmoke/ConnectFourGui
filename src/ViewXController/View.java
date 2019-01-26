@@ -15,13 +15,16 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Collection;
 
 /**
  * Represents main view of the game.
  */
-public class View extends JFrame {
+final class View extends JFrame {
 
     private static JPanel gamePanel;
     private static JButton newGameButton;
@@ -43,6 +46,9 @@ public class View extends JFrame {
     private static final String MSG_NO_WINNER = "No one won...";
     private static MachineThread machineThread;
 
+    /**
+     * Private constructor
+     */
     private View() {
 
     }
@@ -253,7 +259,7 @@ public class View extends JFrame {
             // Get position and player of the last checker that was put in game
             Player player = newBoard.getSlot(i, column);
 
-            if(player != null) {
+            if (player != null) {
                 int index = getComponentIndex(column, i);
                 Slot currSlot = (Slot) gamePanel.getComponent(index - 1);
                 currSlot.setCircleColor(player.getCheckerColor());
@@ -289,7 +295,7 @@ public class View extends JFrame {
         String header = "Attention";
 
         // Define message type and header for option pane.
-        if (message.equals(MSG_DEFEAT) ||message.equals(MSG_VICTORY)) {
+        if (message.equals(MSG_DEFEAT) || message.equals(MSG_VICTORY)) {
             messageType = JOptionPane.INFORMATION_MESSAGE;
             header = "Info";
         } else {
@@ -347,7 +353,7 @@ public class View extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (initiated()) {
-                gameModel.setLevel((int)levelSelection.getSelectedItem());
+                gameModel.setLevel((int) levelSelection.getSelectedItem());
             }
         }
     }
@@ -420,7 +426,6 @@ public class View extends JFrame {
      * Listener class for frame resizing.
      */
     class ResizeListener extends ComponentAdapter {
-
         @Override
         public void componentResized(ComponentEvent e) {
             Dimension newSize = getSlotSize();

@@ -1,9 +1,9 @@
 package Model;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
- * Represents a player in the game
+ * Represents a player in the game.
  */
 public class Player implements Cloneable, Comparable {
 
@@ -12,14 +12,20 @@ public class Player implements Cloneable, Comparable {
     private boolean isMachine;
     private boolean isWinner;
 
-
+    /**
+     * Creates a new human or machine Player.
+     *
+     * @param checkerColor Checker color of the Player.
+     * @param isMachine Indicates if player is type of machine or not.
+     */
     public Player(Color checkerColor, boolean isMachine) {
         this.checkerColor = checkerColor;
         this.isMachine = isMachine;
     }
 
     /**
-     * Creates a new human or machine Model.Player.
+     * Creates a new human or machine Player.
+     *
      * @param symbol Symbol of the player.
      * @param isMachine Indicates if player is type of machine or not.
      */
@@ -88,6 +94,9 @@ public class Player implements Cloneable, Comparable {
         return clone;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(Object o) {
         Player player = (Player) o;
