@@ -49,16 +49,15 @@ final class View extends JFrame {
     /**
      * Private constructor
      */
-    private View() {
-
+    private View(String windowHeader) {
+        super(windowHeader);
     }
 
     /**
      * Method that initializes the view.
      */
     private void showGame() {
-        JFrame mainFrame = new JFrame("Connect Four");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Initializing controls here.
         JPanel menuPanel = new JPanel();
@@ -79,14 +78,14 @@ final class View extends JFrame {
         gamePanel.setLayout(new GridLayout(Board.ROWS, Board.COLS));
 
         // Adding components to the main container.
-        Container mainContainer = mainFrame.getContentPane();
+        Container mainContainer = this.getContentPane();
         mainContainer.add(BorderLayout.CENTER, gamePanel);
         mainContainer.add(BorderLayout.SOUTH, menuPanel);
 
-        mainFrame.setMinimumSize(new Dimension(300, 300));
-        mainFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        this.setMinimumSize(new Dimension(300, 300));
+        this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         initGamePanel();
-        mainFrame.setVisible(true);
+        this.setVisible(true);
 
     }
 
@@ -443,7 +442,7 @@ final class View extends JFrame {
      * @param args /
      */
     public static void main(String[] args) {
-        View mainView = new View();
+        View mainView = new View("Connect Four");
         mainView.showGame();
     }
 
