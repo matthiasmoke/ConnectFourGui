@@ -443,7 +443,7 @@ final class View extends JFrame {
      */
     public static void main(String[] args) {
         View mainView = new View("Connect Four");
-        mainView.showGame();
+        SwingUtilities.invokeLater(() -> mainView.showGame());
     }
 
     /**
