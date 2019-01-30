@@ -193,6 +193,7 @@ final class View extends JFrame {
 
         @Override
         public void run() {
+            super.run();
             machinePlaying = true;
             Board machineMove = gameModel.machineMove();
 
